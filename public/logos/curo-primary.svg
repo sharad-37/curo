@@ -1,0 +1,22 @@
+<!-- public/logos/curo-primary.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 100" fill="none" role="img" aria-label="Curo logo">
+  <!-- Symbol: Overlapping Leaves -->
+  <g transform="translate(10, 5) scale(0.9)">
+    <!-- Top Leaf (Light Green) -->
+    <path d="M 90 20 C 75 -5 20 5 5 50 C 30 35 60 40 80 45 C 95 48 100 25 90 20 Z" fill="#8CA68F" />
+    <!-- Bottom Leaf (Dark Green) -->
+    <path d="M 5 50 C 20 80 65 100 90 85 C 105 75 95 50 80 50 C 50 50 25 55 5 50 Z" fill="#4A7057" />
+  </g>
+
+  <!-- Wordmark: Custom Geometric Paths -->
+  <g stroke="#3C3C3C" stroke-width="16" stroke-linecap="butt" stroke-linejoin="round" fill="none" transform="translate(120, 0)">
+    <!-- 'c' -->
+    <path d="M 45 26 A 22 22 0 1 0 45 74" />
+    <!-- 'u' (stemless) -->
+    <path d="M 78 26 L 78 52 A 22 22 0 0 0 122 52 L 122 26" />
+    <!-- 'r' -->
+    <path d="M 148 26 L 148 74 M 148 48 A 20 20 0 0 1 180 34" />
+    <!-- 'o' (perfect circle) -->
+    <circle cx="218" cy="50" r="22" />
+  </g>
+</svg>

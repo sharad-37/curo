@@ -1,0 +1,306 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// -----------------------------------------------------------------------------
+// USER & AUTHENTICATION (Auth.js / NextAuth v5 Compatible)
+// -----------------------------------------------------------------------------
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relationships
+  accounts                Account[]
+  sessions                Session[]
+  financialAccounts       FinancialAccount[]
+  importBatches           ImportBatch[]
+  transactions            Transaction[]
+  categories              Category[]
+  budgets                 Budget[]
+  savingsGoals            SavingsGoal[]
+  recurringExpenses       RecurringExpense[]
+  userCategoryCorrections UserCategoryCorrection[]
+  financialInsights       FinancialInsight[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// -----------------------------------------------------------------------------
+// FINANCIAL DOMAIN MODELS
+// -----------------------------------------------------------------------------
+
+enum AccountType {
+  SAVINGS
+  CHECKING
+  CREDIT_CARD
+  WALLET
+  INVESTMENT
+}
+
+model FinancialAccount {
+  id            String      @id @default(cuid())
+  userId        String
+  institution   String      // e.g., "HDFC Bank", "ICICI Bank", "Zerodha"
+  accountName   String      // e.g., "Salary Savings", "Credit Card"
+  accountType   AccountType @default(SAVINGS)
+  accountNumber String?     // Masked string, e.g., "•••• 4092"
+  currency      String      @default("INR")
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@index([userId])
+  @@map("financial_accounts")
+}
+
+enum ImportStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model ImportBatch {
+  id                 String       @id @default(cuid())
+  userId             String
+  filename           String
+  totalRows          Int          @default(0)
+  successfulRows     Int          @default(0)
+  failedRows         Int          @default(0)
+  status             ImportStatus @default(PENDING)
+  errorMessage       String?      @db.Text
+  createdAt          DateTime     @default(now())
+  completedAt        DateTime?
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@index([userId])
+  @@map("import_batches")
+}
+
+enum TransactionType {
+  DEBIT   // Expense
+  CREDIT  // Income
+  TRANSFER // Internal movement between user accounts
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  userId      String?  // Null means system-default global category
+  name        String   // e.g., "Food & Dining", "Subscriptions", "Housing"
+  slug        String   // e.g., "food-dining"
+  icon        String?  // Icon identifier
+  colorHex    String?  // Visual color token
+  isSystem    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  user                    User?                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions            Transaction[]
+  budgets                 Budget[]
+  userCategoryCorrections UserCategoryCorrection[]
+
+  @@unique([userId, slug])
+  @@index([userId])
+  @@map("categories")
+}
+
+model Transaction {
+  id                  String          @id @default(cuid())
+  userId              String
+  financialAccountId  String
+  importBatchId       String?
+  categoryId          String?
+
+  date                DateTime        @db.Date
+  amount              Decimal         @db.Decimal(12, 2) // Precision financial amount
+  currency            String          @default("INR")
+  type                TransactionType @default(DEBIT)
+
+  description         String          @db.Text // Raw string from bank statement
+  normalizedMerchant  String                   // Extracted merchant e.g., "Swiggy"
+
+  confidenceScore     Float           @default(1.0) // Classification model confidence (0.0 to 1.0)
+  isReviewed          Boolean         @default(false)
+
+  // Deduplication & Integrity
+  deduplicationHash   String                   // SHA256(userId + date + amount + description)
+
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  // Relationships
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  financialAccount FinancialAccount  @relation(fields: [financialAccountId], references: [id], onDelete: Cascade)
+  importBatch      ImportBatch?      @relation(fields: [importBatchId], references: [id], onDelete: SetNull)
+  category         Category?         @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  corrections      UserCategoryCorrection[]
+
+  @@unique([userId, deduplicationHash]) // Guarantees duplicate statements cannot create duplicate records
+  @@index([userId, date])
+  @@index([userId, categoryId])
+  @@map("transactions")
+}
+
+// Model to capture user manual overrides for continuous ML learning
+model UserCategoryCorrection {
+  id             String   @id @default(cuid())
+  userId         String
+  transactionId  String
+  rawDescription String   @db.Text
+  oldCategoryId  String?
+  newCategoryId  String
+  createdAt      DateTime @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transaction Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  category    Category    @relation(fields: [newCategoryId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("user_category_corrections")
+}
+
+// -----------------------------------------------------------------------------
+// PLANNING & FORECASTING
+// -----------------------------------------------------------------------------
+
+model Budget {
+  id         String   @id @default(cuid())
+  userId     String
+  categoryId String
+  amount     Decimal  @db.Decimal(12, 2)
+  period     String   @default("MONTHLY") // "MONTHLY"
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, categoryId, period])
+  @@map("budgets")
+}
+
+model SavingsGoal {
+  id            String    @id @default(cuid())
+  userId        String
+  name          String    // e.g., "Emergency Fund", "MacBook Pro"
+  targetAmount  Decimal   @db.Decimal(12, 2)
+  currentAmount Decimal   @default(0.00) @db.Decimal(12, 2)
+  targetDate    DateTime? @db.Date
+  colorHex      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("savings_goals")
+}
+
+model RecurringExpense {
+  id                 String    @id @default(cuid())
+  userId             String
+  merchantName       String    // e.g., "Netflix", "Airtel Broadband"
+  estimatedAmount    Decimal   @db.Decimal(12, 2)
+  frequency          String    @default("MONTHLY") // "MONTHLY", "YEARLY", "WEEKLY"
+  lastObservedDate   DateTime  @db.Date
+  nextExpectedDate   DateTime  @db.Date
+  isActive           Boolean   @default(true)
+  createdAt          DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("recurring_expenses")
+}
+
+// -----------------------------------------------------------------------------
+// AI INSIGHTS & ANALYTICS
+// -----------------------------------------------------------------------------
+
+enum InsightType {
+  SPENDING_SPIKE
+  RECURRING_COMMITMENT
+  BUDGET_WARNING
+  SAVINGS_OPPORTUNITY
+  CATEGORY_SHIFT
+}
+
+model FinancialInsight {
+  id              String      @id @default(cuid())
+  userId          String
+  type            InsightType
+  title           String
+  summary         String      @db.Text
+  evidenceData    Json        // Structured numeric evidence e.g., { "previousMonth": 4200, "currentMonth": 8900 }
+  confidenceScore Float       @default(1.0)
+  isDismissed     Boolean     @default(false)
+  periodStart     DateTime    @db.Date
+  periodEnd       DateTime    @db.Date
+  createdAt       DateTime    @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isDismissed])
+  @@map("financial_insights")
+}
