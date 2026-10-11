@@ -65,8 +65,6 @@ No bank-password collection. No ad-driven financial product pitches. Just a calm
 
 ## 🖥 Preview
 
-> Add current screenshots to `docs/screenshots/` to make this section live on GitHub.
-
 |                     Landing page                      |                      Dashboard                       |                      Analytics                       |
 | :---------------------------------------------------: | :--------------------------------------------------: | :--------------------------------------------------: |
 | ![Landing page preview](docs/screenshots/landing.png) | ![Dashboard preview](docs/screenshots/dashboard.png) | ![Analytics preview](docs/screenshots/analytics.png) |
