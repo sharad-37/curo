@@ -1,126 +1,133 @@
 <div align="center">
 
-<img src="public/logos/curo-primary.svg" alt="Curo Logo" width="200" />
+  <img src="public/logos/curo-primary.svg" alt="Curo logo" width="160" />
 
-# Curo
+  <h1>Curo — Your money, understood.</h1>
 
-### Your money, understood.
+  <p><strong>Financial clarity, without the noise.</strong></p>
 
-**AI-powered financial intelligence for modern India.**
+  <p>
+    Turn messy Indian bank and UPI statements into a clearer picture of your spending.
+    Import a CSV, make sense of transactions, and discover patterns with explainable insights.
+  </p>
 
-Transform messy UPI statements into calm, art-directed clarity.
-Zero bank credentials. Zero ads. Evidence-based insights.
+  <p><em>Built for modern India. Designed to feel a little more human.</em></p>
 
-[![Next.js](https://img.shields.io/badge/Next.js-15.1-black?logo=next.js)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19.0-61DAFB?logo=react)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind](https://img.shields.io/badge/Tailwind-4.0-38BDF8?logo=tailwindcss)](https://tailwindcss.com/)
-[![Prisma](https://img.shields.io/badge/Prisma-6.2-2D3748?logo=prisma)](https://www.prisma.io/)
-[![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python)](https://www.python.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+  <p>
+    <a href="#-the-idea">The idea</a> ·
+    <a href="#-features">Features</a> ·
+    <a href="#-architecture">Architecture</a> ·
+    <a href="#-get-started">Get started</a> ·
+    <a href="#-security--privacy">Privacy</a>
+  </p>
+
+  <p>
+    <img src="https://img.shields.io/badge/Next.js-15.1-111111?logo=next.js&logoColor=white" alt="Next.js 15.1" />
+    <img src="https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white" alt="React 19" />
+    <img src="https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white" alt="TypeScript 5.7" />
+    <img src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind CSS 4" />
+    <img src="https://img.shields.io/badge/Prisma-6.2-2D3748?logo=prisma&logoColor=white" alt="Prisma 6.2" />
+    <img src="https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white" alt="Python 3.12" />
+    <img src="https://img.shields.io/badge/License-MIT-5B8066.svg" alt="MIT License" />
+  </p>
 
 </div>
 
 ---
 
-## 📸 Preview
+## ✳ The idea
 
-> _Add screenshots here after taking them (see Part 5 below)_
+Money data can be overwhelming. Bank statements are full of cryptic narrations, transactions are scattered across categories, and totals alone rarely explain the _why_ behind your spending.
 
-|               Landing Page               |                  Dashboard                   |                  Analytics                   |
-| :--------------------------------------: | :------------------------------------------: | :------------------------------------------: |
-| ![Landing](docs/screenshots/landing.png) | ![Dashboard](docs/screenshots/dashboard.png) | ![Analytics](docs/screenshots/analytics.png) |
+**Curo is a personal-finance project built around a simple idea: your money should make more sense.**
 
----
+Import a statement instead of handing over bank credentials. Curo normalizes transaction descriptions, categorizes activity, and presents insights based on the records you provide.
 
-## ✨ What is Curo?
+For example:
 
-Most Indian finance apps are built around three bad ideas: ask for your bank password, spam you with credit card ads, or dump raw transaction data back at you without context.
+`UPI-SWIGGY-REST-PAY-BANGALORE-9912` → **Swiggy · Food & Dining**
 
-**Curo takes a different approach.** It reads your bank statement CSV, cleanses cryptic UPI narrations (`UPI-SWIGGY-REST-PAY-BANGALORE-9912` → `Swiggy`), categorizes every transaction using a scikit-learn classifier, and surfaces evidence-based insights about your actual spending behavior — all without storing bank credentials.
+No bank-password collection. No ad-driven financial product pitches. Just a calmer way to understand your spending.
 
-### Core Capabilities
+## ✨ Features
 
-- 🧠 **ML Transaction Classification** — Python FastAPI service with scikit-learn TF-IDF + Logistic Regression, trained on Indian UPI/card patterns
-- 🔐 **Zero Credential Storage** — CSV upload only. No bank login scraping, ever.
-- 💰 **Precision Financial Math** — Decimal.js arithmetic (no floating-point errors on money)
-- 📊 **Evidence-Based Insights** — Month-end expenditure forecasting with daily run-rate analysis
-- 🔁 **Recurring Subscription Detection** — Automatically identifies Netflix, Spotify, Rent, Gym
-- 🎨 **Editorial Design System** — Switzer typography, warm ivory palette, Noho-inspired aesthetic
-- 🛡️ **DPDP Compliant** — 1-click JSON export, permanent data deletion, per-user data isolation
-- 🧮 **Deterministic Calculations** — All totals derived from source transactions, never fabricated
+- **Transaction categorization** — a Python service uses TF-IDF and Logistic Regression to classify transaction descriptions.
+- **Readable merchant names** — normalize cryptic Indian UPI and card narrations.
+- **Spending insights** — expenditure summaries and month-end projections based on transaction history.
+- **Recurring payment detection** — surface patterns that may indicate subscriptions or regular bills.
+- **Precision-first money math** — Decimal.js avoids common floating-point errors in financial calculations.
+- **Privacy-minded imports** — upload CSV statements; the app is designed not to collect bank credentials.
+- **Data controls** — user-scoped records, JSON export and account-data deletion flows.
+- **A considered interface** — warm ivory surfaces, restrained green accents, Switzer typography and JetBrains Mono for financial figures.
+- **Fallback categorization** — rule-based categorization is available when the ML service is unavailable.
 
----
+> Curo's insights are derived from imported records. Forecasts and categories are estimates, not financial advice. Review results before relying on them.
 
-## 🏗️ Architecture
+## 🖥 Preview
 
-┌───────────────────────────────────────────────────────────┐
-│ USER (Browser) │
-└────────────────────────┬──────────────────────────────────┘
-│ HTTPS
-┌────────────────────────▼──────────────────────────────────┐
-│ NEXT.JS 15 (App Router + RSC) │
-│ Marketing · Auth Pages · Dashboard · Transactions · API │
-└──────┬────────────────────────────────────┬───────────────┘
-│ │
-│ Prisma 6 ORM │ HTTP (1.5s timeout)
-▼ ▼
-┌─────────────────┐ ┌────────────────────────┐
-│ NEON POSTGRES │ │ PYTHON FASTAPI (ML) │
-│ (Serverless) │ │ scikit-learn TF-IDF │
-│ Per-user │ │ Logistic Regression │
-│ isolation │ │ Confidence scoring │
-└─────────────────┘ └────────────────────────┘
+> Add current screenshots to `docs/screenshots/` to make this section live on GitHub.
 
----
+|                     Landing page                      |                      Dashboard                       |                      Analytics                       |
+| :---------------------------------------------------: | :--------------------------------------------------: | :--------------------------------------------------: |
+| ![Landing page preview](docs/screenshots/landing.png) | ![Dashboard preview](docs/screenshots/dashboard.png) | ![Analytics preview](docs/screenshots/analytics.png) |
 
-## 🛠️ Tech Stack
+## 🧭 How it works
 
-### Frontend
+1. **Import** a supported bank or UPI statement in CSV format.
+2. **Normalize** transaction narrations into more readable merchant descriptions.
+3. **Categorize** transactions using the ML service, with a deterministic fallback.
+4. **Explore** summaries and patterns based on the imported data.
 
-- **Framework:** Next.js 15.1 (App Router, Server Actions)
-- **UI Library:** React 19
-- **Language:** TypeScript 5.7 (strict mode)
-- **Styling:** Tailwind CSS 4.0 (CSS-first config)
-- **Animations:** Framer Motion 12 (`motion` package)
-- **Charts:** Recharts 2.15
-- **Forms:** React Hook Form 7 + Zod validation
-- **UI Primitives:** Radix UI
-- **Icons:** Lucide React
+## 🏗 Architecture
 
-### Backend & Database
+```text
+                         ┌──────────────────────┐
+                         │    User's browser    │
+                         └──────────┬───────────┘
+                                    │ HTTPS
+                         ┌──────────▼───────────┐
+                         │      Next.js 15      │
+                         │ UI · Auth · API      │
+                         └───────┬───────┬──────┘
+                                 │       │ HTTP
+                        ┌────────▼───┐ ┌─▼────────────────┐
+                        │   Prisma   │ │ Python FastAPI   │
+                        │            │ │ scikit-learn     │
+                        └─────┬──────┘ └──────────────────┘
+                              │
+                        ┌─────▼──────┐
+                        │ Neon       │
+                        │ PostgreSQL │
+                        └────────────┘
+```
 
-- **Auth:** Auth.js v5 (NextAuth) with GitHub OAuth
-- **ORM:** Prisma 6.2
-- **Database:** Neon PostgreSQL (serverless)
-- **Precision Math:** Decimal.js (zero floating-point errors)
-- **CSV Parsing:** PapaParse
+## 🧰 Tech stack
 
-### Machine Learning
+| Area                | Tools                                        |
+| ------------------- | -------------------------------------------- |
+| Frontend            | Next.js 15.1, React 19, TypeScript 5.7       |
+| Styling & motion    | Tailwind CSS 4, Framer Motion 12             |
+| UI & visualization  | Radix UI, Lucide React, Recharts             |
+| Forms & validation  | React Hook Form, Zod                         |
+| Authentication      | Auth.js v5 with GitHub OAuth                 |
+| Database            | Neon PostgreSQL, Prisma 6.2                  |
+| Financial utilities | Decimal.js, PapaParse                        |
+| ML service          | Python 3.12, FastAPI, scikit-learn, Pydantic |
+| Testing & tooling   | Vitest, ESLint, pnpm                         |
 
-- **Service:** Python 3.12 + FastAPI 0.115
-- **ML Library:** scikit-learn 1.6 (TF-IDF Vectorizer + Logistic Regression)
-- **Validation:** Pydantic 2.10
-
-### Testing & Quality
-
-- **Unit Tests:** Vitest 2.1
-- **Linting:** ESLint 9 (flat config)
-- **Package Manager:** pnpm 9
-
----
-
-## 🚀 Getting Started
+## 🚀 Get started
 
 ### Prerequisites
 
-- Node.js **20.11+**
-- pnpm **9.x** (`npm install -g pnpm`)
-- Python **3.12+**
-- A Neon PostgreSQL database (free tier works) — [neon.tech](https://neon.tech)
-- A GitHub OAuth app — [github.com/settings/developers](https://github.com/settings/developers)
+- Node.js `20.11+`
+- pnpm `9.x`
+- Python `3.12+`
+- A PostgreSQL database (the project is configured for Neon)
+- A GitHub OAuth application
 
-### 1. Clone & Install
+### 1. Clone the repository
+
+Replace `YOUR_USERNAME` with your GitHub username.
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/curo.git
@@ -128,163 +135,259 @@ cd curo
 pnpm install
 ```
 
-2. Environment Setup
-   Bash
+### 2. Configure environment variables
 
+```bash
 cp .env.example .env
-Fill in your .env with:
+```
 
-DATABASE_URL from Neon
-AUTH_SECRET (generate: npx auth secret)
-AUTH_GITHUB_ID and AUTH_GITHUB_SECRET from your GitHub OAuth app
-GitHub OAuth callback URL: http://localhost:3000/api/auth/callback/github
+Add the values required by your local configuration:
 
-3. Database Setup
-   Bash
+```dotenv
+DATABASE_URL="your-neon-postgresql-connection-string"
+AUTH_SECRET="your-auth-secret"
+AUTH_GITHUB_ID="your-github-oauth-client-id"
+AUTH_GITHUB_SECRET="your-github-oauth-client-secret"
+```
 
+Generate an Auth.js secret with:
+
+```bash
+pnpm exec auth secret
+```
+
+Set your GitHub OAuth callback URL to:
+
+```text
+http://localhost:3000/api/auth/callback/github
+```
+
+**Never commit your `.env` file or real credentials.**
+
+### 3. Set up the database
+
+```bash
 pnpm exec prisma generate
-pnpm exec prisma db push 4. Install Python ML Service
-Bash
+pnpm exec prisma db push
+```
 
+Use your team's migration workflow instead of `db push` for production deployments.
+
+### 4. Install the ML service dependencies
+
+```bash
 cd ml-service
 python -m pip install --upgrade pip
 pip install -r requirements.txt --prefer-binary
-cd .. 5. Run the Application
-Terminal 1 — Next.js App:
+cd ..
+```
 
-Bash
+### 5. Run the app
 
+Start the Next.js app in one terminal:
+
+```bash
 pnpm dev
-Opens at: http://localhost:3000
+```
 
-Terminal 2 — Python ML Service:
+Start the ML service in another terminal:
 
-Bash
-
+```bash
 cd ml-service
 python main.py
-Opens at: http://127.0.0.1:8000 (Swagger docs at /docs)
+```
 
-6. Test the Flow
-   Visit http://localhost:3000
-   Click "Get started" → Sign in with GitHub
-   Go to Transactions → Import CSV
-   Upload the sample CSV from docs/sample-statement.csv
-   View your automatically categorized dashboard
-   🧪 Testing
-   Bash
+- Web app: `http://localhost:3000`
+- ML service: `http://127.0.0.1:8000`
+- API docs: `http://127.0.0.1:8000/docs`
 
-# Run unit tests (financial math, normalization, hashing)
+### 6. Try the import flow
 
+1. Open the web app.
+2. Sign in with GitHub.
+3. Open **Transactions** and choose the CSV import option.
+4. Use `docs/sample-statement.csv` if the sample file is present in your checkout.
+5. Review the categorized transactions and dashboard summaries.
+
+## 🧪 Tests
+
+Run the test suite:
+
+```bash
 pnpm test
+```
 
-# Run tests once (CI mode)
+Run tests once in CI mode:
 
+```bash
 pnpm test --run
-Current coverage:
+```
 
-✅ Merchant normalization (Indian UPI patterns)
-✅ SHA-256 deduplication hashing
-✅ Decimal arithmetic (floating-point safety)
-✅ Categorization engine baseline
-✅ Financial overview calculations
-📁 Project Structure
-text
+The original project notes list coverage for:
 
+- Merchant normalization for Indian UPI patterns
+- SHA-256 deduplication hashing
+- Decimal arithmetic
+- Baseline categorization
+- Financial overview calculations
+
+Run the checks configured in the repository before opening a pull request. Actual test coverage may change as the project evolves.
+
+## 🗂 Project structure
+
+```text
 curo/
 ├── app/
-│ ├── (marketing)/ # Public landing, privacy, terms
-│ ├── (auth)/ # Login, signup
-│ ├── (app)/ # Authenticated dashboard, transactions, analytics
-│ ├── actions/ # Server Actions (import, budget, privacy)
-│ ├── api/ # Auth.js API routes
-│ ├── error.tsx # Global error boundary
-│ ├── not-found.tsx # 404 page
-│ ├── robots.ts # SEO
-│ └── sitemap.ts # SEO
+│   ├── (marketing)/       # Public pages
+│   ├── (auth)/            # Authentication pages
+│   ├── (app)/             # Dashboard and finance pages
+│   ├── actions/           # Server Actions
+│   ├── api/               # API routes
+│   ├── error.tsx          # Global error boundary
+│   ├── not-found.tsx      # 404 page
+│   ├── robots.ts           # SEO directives
+│   └── sitemap.ts          # Sitemap
 ├── components/
-│ ├── brand/ # Logo system
-│ ├── marketing/ # Hero, Features, Footer
-│ ├── app/ # Sidebar, dropdowns, modals
-│ ├── charts/ # Recharts wrappers
-│ ├── motion/ # Framer Motion primitives
-│ └── ui/ # Reusable primitives
+│   ├── brand/             # Logo system
+│   ├── marketing/         # Landing page components
+│   ├── app/               # App navigation and interactions
+│   ├── charts/            # Chart wrappers
+│   ├── motion/            # Animation primitives
+│   └── ui/                # Reusable UI components
 ├── lib/
-│ ├── auth/ # Auth helpers
-│ ├── db/ # Prisma singleton
-│ ├── finance/ # Normalizer, categorizer, forecasting, insights
-│ ├── ml/ # Python ML HTTP client (with fallback)
-│ └── utils/ # Formatters, cn helper
-├── ml-service/ # Python FastAPI ML microservice
-│ ├── main.py
-│ ├── model_trainer.py
-│ └── requirements.txt
-├── prisma/
-│ └── schema.prisma # 15+ models for financial domain
+│   ├── auth/              # Auth helpers
+│   ├── db/                # Prisma client
+│   ├── finance/            # Categorization and insights
+│   ├── ml/                # ML service client
+│   └── utils/             # Shared utilities
+├── ml-service/            # Python FastAPI service
+├── prisma/                # Database schema
 ├── public/
-│ ├── fonts/ # Switzer + JetBrains Mono
-│ ├── logos/ # SVG brand assets
-│ └── favicon.svg
-├── tests/
-│ └── finance.test.ts
-├── types/ # TypeScript declarations
-├── auth.ts # Auth.js configuration
-├── auth.config.ts # Edge-safe auth config
-├── middleware.ts # Route protection
+│   ├── fonts/             # Local fonts
+│   ├── logos/             # Brand assets
+│   └── favicon.svg
+├── tests/                 # Automated tests
+├── types/                 # TypeScript declarations
+├── auth.ts
+├── auth.config.ts
+├── middleware.ts
 └── vitest.config.mjs
-🎨 Design System
-Color Palette
-Token Hex Usage
-curo-primary #4A7057 Primary green, CTAs, positive states
-curo-secondary #8CA68F Secondary green, highlights
-curo-background #F1EEE9 Warm ivory background
-curo-surface #FFFFFF Card surfaces
-curo-text #3C3C3C Primary text (charcoal)
-curo-warning #C4956A Warm amber warnings
-curo-negative #B87070 Muted rose errors
-Typography
-Display & Body: Switzer by Indian Type Foundry (free commercial license)
-Monospace: JetBrains Mono (tabular numerals for financial figures)
-🔐 Security & Privacy
-Curo is designed with India's Digital Personal Data Protection Act 2023 (DPDP) in mind:
+```
 
-No bank credentials — CSV uploads only
-Per-user data isolation — Every Prisma query scoped by userId
-SHA-256 idempotency hashes — Prevents duplicate transaction imports
-1-click data export — Full JSON backup available in settings
-1-click account wipe — Permanent deletion of all records
-JWT sessions — HTTP-only, SameSite=Lax cookies
-No PII to AI models — Only anonymized merchant strings sent to classifier
-📊 Machine Learning Details
-The ML microservice (ml-service/) uses a scikit-learn Pipeline:
+## 🎨 Design direction
 
-Python
+Curo aims for a quiet, editorial visual language: less spreadsheet, more clarity.
 
+| Token      | Value     | Use                                 |
+| ---------- | --------- | ----------------------------------- |
+| Primary    | `#4A7057` | Primary actions and positive states |
+| Secondary  | `#8CA68F` | Highlights and supporting accents   |
+| Background | `#F1EEE9` | Warm ivory canvas                   |
+| Surface    | `#FFFFFF` | Cards and panels                    |
+| Text       | `#3C3C3C` | Main text                           |
+| Warning    | `#C4956A` | Warnings                            |
+| Negative   | `#B87070` | Errors and negative states          |
+
+- **Display & body:** Switzer
+- **Monospace:** JetBrains Mono, particularly for tabular financial figures
+
+## 🔐 Security & privacy
+
+Curo is designed with privacy-conscious defaults and with India's Digital Personal Data Protection Act, 2023, in mind. This statement describes project intent; it is not a legal certification or guarantee of compliance.
+
+- **No bank credentials:** the documented workflow uses CSV imports.
+- **User-scoped records:** database access should be scoped to the authenticated user.
+- **Duplicate detection:** SHA-256 hashes help identify repeated imports.
+- **Data portability:** a JSON export flow is documented in the application.
+- **Deletion controls:** account-data deletion is intended to remove associated records.
+- **Session security:** the project notes describe HTTP-only, `SameSite=Lax` cookies.
+- **Minimized ML input:** the classifier is intended to receive merchant strings rather than full personal transaction records.
+
+Before using real financial data, review authorization boundaries, logs, retention behavior, backups, third-party processing and the actual deletion implementation. Do not upload real statements to an untrusted deployment.
+
+## 🧠 Machine learning
+
+The ML microservice uses a scikit-learn pipeline combining TF-IDF text features and Logistic Regression.
+
+```python
 Pipeline([
-('tfidf', TfidfVectorizer(ngram_range=(1, 3), lowercase=True, max_features=1000)),
-('clf', LogisticRegression(C=10.0, max_iter=200, solver='lbfgs'))
+    (
+        "tfidf",
+        TfidfVectorizer(
+            ngram_range=(1, 3),
+            lowercase=True,
+            max_features=1000,
+        ),
+    ),
+    (
+        "clf",
+        LogisticRegression(
+            C=10.0,
+            max_iter=200,
+            solver="lbfgs",
+        ),
+    ),
 ])
-Trained on 60+ real Indian bank narration patterns across 10 categories:
+```
 
-Food & Dining, Groceries, Transport, Housing, Utilities
-Subscriptions, Shopping, Healthcare, Investments, Income
-Fallback behavior: If the Python service is offline, Next.js automatically falls back to a deterministic rule-based categorizer (lib/finance/categorizer.ts).
+The original project notes describe training patterns across ten categories:
 
-🤝 Contributing
-This is a portfolio project, but issues and discussions are welcome. Feel free to open an issue if you spot a bug or have architectural feedback.
+- Food & Dining
+- Groceries
+- Transport
+- Housing
+- Utilities
+- Subscriptions
+- Shopping
+- Healthcare
+- Investments
+- Income
 
-📄 License
-MIT License — see LICENSE for details.
+Predictions can be wrong, especially for unfamiliar merchant names. The rule-based fallback is intended to keep basic categorization available when the ML service is offline.
 
-🙏 Acknowledgments
-Design inspiration: Noho.ink — for the editorial aesthetic
-Typography: Switzer by Indian Type Foundry
-Database hosting: Neon — serverless Postgres
-Icons: Lucide
+## 🛣 Roadmap
+
+Potential next steps for a more dependable release:
+
+- [ ] Add and maintain real product screenshots
+- [ ] Expand automated tests for imports, authorization and financial edge cases
+- [ ] Verify database backup and restore procedures
+- [ ] Add production monitoring and actionable error reporting
+- [ ] Test responsive layouts and keyboard accessibility
+- [ ] Document supported CSV formats and import limitations
+
+## 🤝 Contributing
+
+Curo is a portfolio project, and thoughtful feedback is welcome.
+
+1. Open an issue describing the bug or proposal.
+2. Keep pull requests focused and explain the reason for the change.
+3. Include tests for behavior changes where practical.
+4. Never include real financial statements, secrets or personal data in issues, fixtures or screenshots.
+
+## 📄 License
+
+Released under the MIT License. See [`LICENSE`](LICENSE) for details.
+
+## 🙏 Credits
+
+- **Design inspiration:** [Noho](https://noho.ink/)
+- **Typography:** Switzer by Indian Type Foundry
+- **Database:** [Neon](https://neon.tech/)
+- **Icons:** [Lucide](https://lucide.dev/)
+
+---
 
 <div align="center">
-Built with intention for modern India.
 
-If this project helped you learn something, consider giving it a ⭐
+<strong>Built with intention for modern India.</strong>
 
-</div> ```
+  <br />
+
+<sub>Less noise. More understanding.</sub>
+
+<br /><br />
+
+If Curo sparks an idea or helps you learn something, consider giving the repository a ⭐
+
+</div>
